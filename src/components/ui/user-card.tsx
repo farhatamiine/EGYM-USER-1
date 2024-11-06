@@ -7,7 +7,7 @@ export default function UserCard({ userData }: { userData: UserData }) {
   const { name, location, email, dob, phone, picture, nat } = userData;
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto border-0 shadow-none">
       <CardHeader className="flex flex-col justify-center items-center gap-4 pb-2 border-b-2 mx-6 mb-4">
         <Avatar className="w-20 h-20">
           <AvatarImage src={picture.large} alt={`${name.first} ${name.last}`} />

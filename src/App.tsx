@@ -14,6 +14,12 @@ import {
 } from "./components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "./components/ui/avatar";
 import { getInitials } from "./lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "./components/ui/dialog";
 
 const BASE_URL = "https://randomuser.me/api";
 
@@ -21,7 +27,8 @@ export default function App() {
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState<UserData[]>([]);
-
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -55,6 +62,11 @@ export default function App() {
     fetchUser();
   }, []);
 
+  const handleRowClick = (user: UserData) => {
+    setSelectedUser(user); // Set the selected user
+    setIsDialogOpen(true); // Open the dialog
+  };
+
   if (error) {
     return <div>Something went wrong! Please try again.</div>;
   }
@@ -63,40 +75,52 @@ export default function App() {
     <div className="App">
       {isLoading && <div>Loading...</div>}
       {!isLoading && (
-        <Table>
-          <TableCaption>A list of Users.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Picture</TableHead>
-              <TableHead>First Name</TableHead>
-              <TableHead>Last Name</TableHead>
-              <TableHead>Email</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => {
-              return (
-                <TableRow onClick={() => console.log(user)}>
-                  <TableCell className="font-medium">
-                    <Avatar>
-                      <AvatarImage src={user.picture.medium} />
-                      <AvatarFallback>
-                        {getInitials(user.name.first + " " + user.name.last)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {user.name.first}
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {user.name.last}
-                  </TableCell>
-                  <TableCell className="font-medium">{user.email}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+        <>
+          <Table>
+            <TableCaption>A list of Users.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Picture</TableHead>
+                <TableHead>First Name</TableHead>
+                <TableHead>Last Name</TableHead>
+                <TableHead>Email</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.map((user) => {
+                return (
+                  <TableRow onClick={() => handleRowClick(user)}>
+                    <TableCell className="font-medium">
+                      <Avatar>
+                        <AvatarImage src={user.picture.medium} />
+                        <AvatarFallback>
+                          {getInitials(user.name.first + " " + user.name.last)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {user.name.first}
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {user.name.last}
+                    </TableCell>
+                    <TableCell className="font-medium">{user.email}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+          {/* Dialog Component */}
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogContent>
+              {selectedUser && (
+                <div>
+                  <UserCard userData={selectedUser} />
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+        </>
       )}
     </div>
   );

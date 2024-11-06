@@ -75,6 +75,7 @@
   * {
     @apply border-border;
     font-family: "Roboto", serif;
+    cursor: pointer;
   }
   body {
     @apply bg-background text-foreground;
