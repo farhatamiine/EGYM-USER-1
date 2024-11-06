@@ -1,0 +1,221 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: EGYM Random User Generator API
+  description: API for generating random users with additional endpoints for managing user data.
+  contact:
+    name: EGYM
+    url: https://egym.com/us/careers
+
+servers:
+  - url: https://randomuser.me/api
+
+tags:
+  - name: Users
+    description: Operations for managing users
+
+paths:
+  /users/search:
+    get:
+      summary: Search for a user by name
+      tags:
+        - Users
+      description: Returns a list of users matching the provided name.
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: true
+          description: Full or partial name to search for (first or last name).
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination.
+        - in: query
+          name: results
+          schema:
+            type: integer
+            default: 10
+          description: Number of results per page.
+      responses:
+        '200':
+          description: A list of users matching the search criteria.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  info:
+                    type: object
+                    properties:
+                      seed:
+                        type: string
+                      results:
+                        type: integer
+                      page:
+                        type: integer
+                      version:
+                        type: string
+        '400':
+          description: Invalid request (e.g., missing name parameter).
+        '500':
+          description: Server error.
+
+  /users/{userId}:
+    patch:
+      summary: Update a user's information
+      tags:
+        - Users
+      description: Updates information for a specific user by ID.
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: Unique identifier for the user to update.
+      requestBody:
+        description: The information to update for the user.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: object
+                  properties:
+                    first:
+                      type: string
+                    last:
+                      type: string
+                email:
+                  type: string
+                  format: email
+                location:
+                  type: object
+                  properties:
+                    city:
+                      type: string
+                    country:
+                      type: string
+                phone:
+                  type: string
+                picture:
+                  type: object
+                  properties:
+                    large:
+                      type: string
+                      format: uri
+                    medium:
+                      type: string
+                      format: uri
+                    thumbnail:
+                      type: string
+                      format: uri
+              example:
+                name:
+                  first: "John"
+                  last: "Doe"
+                email: "johndoe@example.com"
+                location:
+                  city: "New York"
+                  country: "USA"
+                phone: "+1-555-555-5555"
+                picture:
+                  large: "https://randomuser.me/api/portraits/men/1.jpg"
+                  medium: "https://randomuser.me/api/portraits/med/men/1.jpg"
+                  thumbnail: "https://randomuser.me/api/portraits/thumb/men/1.jpg"
+      responses:
+        '200':
+          description: User information updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input or missing fields.
+        '404':
+          description: User not found.
+        '500':
+          description: Server error.
+
+    delete:
+      summary: Delete a user
+      tags:
+        - Users
+      description: Deletes a user by ID.
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: Unique identifier for the user to delete.
+      responses:
+        '204':
+          description: User deleted successfully.
+        '404':
+          description: User not found.
+        '500':
+          description: Server error.
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the user.
+        name:
+          type: object
+          properties:
+            title:
+              type: string
+            first:
+              type: string
+            last:
+              type: string
+        location:
+          type: object
+          properties:
+            street:
+              type: object
+              properties:
+                number:
+                  type: integer
+                name:
+                  type: string
+            city:
+              type: string
+            state:
+              type: string
+            country:
+              type: string
+            postcode:
+              type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        picture:
+          type: object
+          properties:
+            large:
+              type: string
+              format: uri
+            medium:
+              type: string
+              format: uri
+            thumbnail:
+              type: string
+              format: uri
