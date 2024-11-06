@@ -1,37 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "./card";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { MapPin, Mail, Phone, Calendar, Flag } from "lucide-react";
-
-interface UserData {
-  gender: string;
-  name: {
-    title: string;
-    first: string;
-    last: string;
-  };
-  location: {
-    street: {
-      number: number;
-      name: string;
-    };
-    city: string;
-    state: string;
-    country: string;
-    postcode: string;
-  };
-  email: string;
-  dob: {
-    date: string;
-    age: number;
-  };
-  phone: string;
-  picture: {
-    large: string;
-    medium: string;
-    thumbnail: string;
-  };
-  nat: string;
-}
+import { UserData } from "@/lib/type";
 
 export default function UserCard({ userData }: { userData: UserData }) {
   const { name, location, email, dob, phone, picture, nat } = userData;
